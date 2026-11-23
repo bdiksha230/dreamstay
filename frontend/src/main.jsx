@@ -6,9 +6,14 @@ import { ClerkProvider } from '@clerk/react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Layout from './Layout'
 import Home from './pages/Home'
-import Hotels from './pages/Hotels'
 import AllRooms from './pages/AllRooms'
 import RoomDetails from './pages/RoomDetails'
+import MyBookings from './pages/MyBookings'
+import OwnerLayout from './pages/hotelOwner/OwnerLayout'
+import Dashboard from './pages/hotelOwner/Dashboard'
+import AddRoom from './pages/hotelOwner/AddRoom'
+import ListRoom from './pages/hotelOwner/ListRoom'
+
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -27,16 +32,34 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: 'hotels',
-        element: <Hotels />
-      },
-      {
         path: '/rooms',
         element: <AllRooms />
       },
       {
         path: '/rooms/:id',
         element: <RoomDetails />
+      },
+      {
+        path: '/my-bookings',
+        element: <MyBookings />
+      },
+      {
+        path: '/owner',
+        element: <OwnerLayout />,
+        children: [
+          {
+            index: true,
+            element: <Dashboard />
+          },
+          {
+            path: "add-room",
+            element: <AddRoom />
+          },
+          {
+            path: "list-room",
+            element: <ListRoom />
+          }
+        ]
       }
     ]
   }

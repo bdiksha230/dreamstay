@@ -12,7 +12,7 @@ const BookIcon = () => (
 const Header = () => {
     const navLinks = [
         { name: 'Home', path: '/' },
-        { name: 'Hotels', path: '/hotels' },
+        { name: 'Hotels', path: '/rooms' },
         { name: 'Experiences', path: '/' },
         { name: 'About', path: '/' },
     ];
