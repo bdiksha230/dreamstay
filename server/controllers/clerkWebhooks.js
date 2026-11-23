@@ -1,4 +1,4 @@
-import User from "../models/User";
+import User from "../models/User.js";
 import { Webhook } from "svix";
 
 const clerkWebhooks = async (req, res) => {
@@ -9,14 +9,14 @@ const clerkWebhooks = async (req, res) => {
         // getting headers
         const headers = {
             "svix-id": req.headers["svix-id"],
-            "svix-timestamp": req.headers["svix-timestanp"],
+            "svix-timestamp": req.headers["svix-timestamp"],
             "svix-signature": req.headers["svix-signature"],
         };
 
         // verify headers
-        await whook.verify(JSON.stringyfy(req.body), headers)
+        const payload = whook.verify(req.body.toString(), headers);
 
-        const { data, type } = req.body;
+        const { data, type } = payload;
 
         const userData = {
             _id: data.id,
@@ -31,23 +31,23 @@ const clerkWebhooks = async (req, res) => {
                 await User.create(userData)
                 break;
             }
-            case "user.update": {
-                await User.fideByIdAndUpdate(data.id, userData)
+            case "user.updated": {
+                await User.findByIdAndUpdate(data.id, userData)
                 break;
             }
             case "user.deleted": {
-                await User.findByAndDelete(data.id)
+                await User.findByIdAndDelete(data.id)
                 break;
             }
             default:
                 break;
         }
-        res.json({success: true, message: "Webhook received"})
+        res.json({ success: true, message: "Webhook received" })
 
 
     } catch (error) {
         console.log(error.message)
-        res.json({success: true, message: "Webhook received"});
+        res.json({ success: true, message: "Webhook received" });
     }
 }
 
