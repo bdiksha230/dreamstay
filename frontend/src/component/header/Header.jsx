@@ -52,7 +52,7 @@ const Header = () => {
             <Link to="/">
                 <div className="flex flex-col items-center">
                     <img src={assets.logo} className={` h-9 ${isScrolled && "   "}`} />
-                    <h3 className={` text-2xl font-playfair font-bold ${isScrolled ? "text-black " : "text-white"}`}>Dream Stay</h3>
+                    <h3 className={` text-2xl font-playfair font-bold ${isScrolled ? "text-black " : "text-white"}`}>Dream Stay123</h3>
                 </div>
             </Link>
 
