@@ -4,9 +4,9 @@ import cors from "cors"
 import connectDB from "./configs/db.js"
 import { clerkMiddleware } from '@clerk/express'
 import clerkWebhooks from "./controllers/clerkWebhooks.js"
+import userRouter from "./routes/userRoutes.js"
 
 
-connectDB()
 
 const app = express()
 app.use(cors())  // enable cross orgin resources sharing
@@ -28,7 +28,8 @@ app.use(clerkMiddleware())
 
 
 
-app.get('/', (req, res) => res.send("API is working  fine"))
+app.get('/', (req, res) => res.send("API is working  fine"));
+app.use('/api/user', userRouter)
 
 const PORT = process.env.PORT || 3000;
 
