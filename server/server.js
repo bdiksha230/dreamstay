@@ -4,53 +4,56 @@ import "dotenv/config";
 import cors from "cors";
 import connectDB from "./configs/db.js";
 import { clerkMiddleware } from "@clerk/express";
-import clerkWebhooks from "./controllers/clerkWebhooks.js";
-import userRouter from "./routes/userRoutes.js";
+// import clerkWebhooks from "./controllers/clerkWebhooks.js";
+// import userRouter from "./routes/userRoutes.js";
 
+connectDB()
 const app = express();
 
 app.use(cors());
-
-// Connect MongoDB before processing API requests
-app.use(async (req, res, next) => {
-    try {
-        await connectDB();
-        next();
-    } catch (error) {
-        console.error("Database connection failed:", error.message);
-        res.status(500).json({
-            success: false,
-            message: "Database connection failed"
-        });
-    }
-});
-
-// Clerk webhook must come before express.json()
-app.post(
-    "/api/clerk",
-    express.raw({ type: "application/json" }),
-    clerkWebhooks
-);
 
 // Other middlewares
 app.use(express.json());
 app.use(clerkMiddleware());
 
+// Connect MongoDB before processing API requests
+// app.use(async (req, res, next) => {
+//     try {
+//         await connectDB();
+//         next();
+//     } catch (error) {
+//         console.error("Database connection failed:", error.message);
+//         res.status(500).json({
+//             success: false,
+//             message: "Database connection failed"
+//         });
+//     }
+// });
+
+// Clerk webhook must come before express.json()
+// app.post(
+//     "/api/clerk",
+//     express.raw({ type: "application/json" }),
+//     clerkWebhooks
+// );
+
+
+
 // API routes
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
     res.send("API is working fine");
 });
 
-app.use("/api/user", userRouter);
+// app.use("/api/user", userRouter);
 
 // Local server only
-if (process.env.NODE_ENV !== "production") {
-    const PORT = process.env.PORT || 3000;
+ 
+const PORT = process.env.PORT || 3000;
 
-    app.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}`);
+app.listen(PORT, () => {
+        console.log(`Server running  on ${PORT}`);
     });
-}
+
 
 // Export for Vercel
 export default app;
