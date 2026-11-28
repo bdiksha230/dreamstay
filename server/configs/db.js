@@ -12,7 +12,7 @@ const connectDB = async () => {
             dbName: "dreamstay" `)
 
     } catch (error) {
-        console.log(error.message)
+        console.error("MongoDB connection error:", error.message);
         throw error;
     }
 };
