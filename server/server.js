@@ -1,52 +1,56 @@
-import express from "express"
-import "dotenv/config"
-import cors from "cors"
-import connectDB from "./configs/db.js"
-import { clerkMiddleware } from '@clerk/express'
-import clerkWebhooks from "./controllers/clerkWebhooks.js"
-import userRouter from "./routes/userRoutes.js"
 
- 
+import express from "express";
+import "dotenv/config";
+import cors from "cors";
+import connectDB from "./configs/db.js";
+import { clerkMiddleware } from "@clerk/express";
+import clerkWebhooks from "./controllers/clerkWebhooks.js";
+import userRouter from "./routes/userRoutes.js";
 
-const app = express()
-app.use(cors())  // enable cross orgin resources sharing
+const app = express();
 
+app.use(cors());
 
-// Clerk webhook route must come before express.json()
+// Connect MongoDB before processing API requests
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error("Database connection failed:", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Database connection failed"
+        });
+    }
+});
+
+// Clerk webhook must come before express.json()
 app.post(
     "/api/clerk",
     express.raw({ type: "application/json" }),
     clerkWebhooks
 );
 
-// middleware
-app.use(express.json())
-app.use(clerkMiddleware())
+// Other middlewares
+app.use(express.json());
+app.use(clerkMiddleware());
 
-// API to listen to clerk webhooks
-// app.use("/api/clerk", clerkWebhooks)
+// API routes
+app.get("/", (req, res) => {
+    res.send("API is working fine");
+});
 
+app.use("/api/user", userRouter);
 
+// Local server only
+if (process.env.NODE_ENV !== "production") {
+    const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => res.send("API is working  fine"));
-app.use('/api/user', userRouter)
+    app.listen(PORT, () => {
+        console.log(`Server running at http://localhost:${PORT}`);
+    });
+}
 
-const PORT = process.env.PORT || 3000;
-
-// app.listen(PORT, () => console.log(`Server running on ${PORT}`));
-// Connect database and start server
-const startServer = async () => {
-    try {
-        await connectDB();
-
-        app.listen(PORT, () => {
-            console.log(`Server running on ${PORT}`);
-        });
-
-    } catch (error) {
-        console.log("Server startup failed:", error.message);
-        process.exit(1);
-    }
-};
-
-startServer();
+// Export for Vercel
+export default app;
