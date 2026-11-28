@@ -4,7 +4,8 @@ import "dotenv/config";
 import cors from "cors";
 import connectDB from "./configs/db.js";
 import { clerkMiddleware } from "@clerk/express";
-// import clerkWebhooks from "./controllers/clerkWebhooks.js";
+import clerkWebhooks from "./controllers/clerkWebhooks.js";
+ 
 // import userRouter from "./routes/userRoutes.js";
 
 connectDB()
@@ -15,6 +16,8 @@ app.use(cors());
 // Other middlewares
 app.use(express.json());
 app.use(clerkMiddleware());
+
+app.use("/api/clerk", clerkWebhooks)
 
 // Connect MongoDB before processing API requests
 // app.use(async (req, res, next) => {
